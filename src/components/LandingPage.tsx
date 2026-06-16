@@ -41,14 +41,19 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
         <div className="hidden md:flex items-center gap-8 text-sm text-ghost-text-secondary">
           <a href="#features" className="hover:text-ghost-text transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-ghost-text transition-colors">How it works</a>
-          <button onClick={onGetStarted} className="btn-primary text-sm py-2.5 px-6">
+          <motion.button 
+            whileHover={{ scale: 1.02 }} 
+            whileTap={{ scale: 0.98 }} 
+            onClick={onGetStarted} 
+            className="btn-primary text-sm py-2.5 px-6"
+          >
             Upload Lease
-          </button>
+          </motion.button>
         </div>
       </motion.nav>
 
       {/* Hero */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-20">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-24 md:pt-32 pb-32">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,16 +90,22 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={onGetStarted}
               className="btn-primary text-lg py-4 px-10 flex items-center gap-3 glow-orange-strong"
             >
               Upload Your Lease
               <ArrowRight className="w-5 h-5" />
-            </button>
-            <button className="btn-secondary py-4 px-8 text-lg">
+            </motion.button>
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-secondary py-4 px-8 text-lg"
+            >
               View Sample Report
-            </button>
+            </motion.button>
           </motion.div>
         </motion.div>
 
@@ -140,9 +151,10 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
                 key={feature.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -8 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-card p-8 group"
+                transition={{ delay: i * 0.1, duration: 0.3 }}
+                className="glass-card p-10 md:p-12 group"
               >
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ghost-orange/20 to-transparent flex items-center justify-center mb-5 group-hover:from-ghost-orange/30 transition-all">
                   <feature.icon className="w-6 h-6 text-ghost-orange" />
@@ -216,12 +228,14 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to protect your rights?
           </h2>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onGetStarted}
             className="btn-primary text-lg py-4 px-10 glow-orange-strong"
           >
             Upload Your Lease Now
-          </button>
+          </motion.button>
         </motion.div>
       </div>
 

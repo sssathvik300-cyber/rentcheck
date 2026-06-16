@@ -15,7 +15,6 @@ interface ViolationReportProps {
 }
 
 function RiskGauge({ score }: { score: number }) {
-  const radius = 80;
   const color = score >= 70 ? '#FF4444' : score >= 40 ? '#FFB020' : '#00D68F';
 
   return (
@@ -158,8 +157,20 @@ function ViolationCard({ violation, index }: { violation: Violation; index: numb
 }
 
 export default function ViolationReport({ report, onViewLandlord, onGenerateLetter, onViewImpact }: ViolationReportProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
+
   const criticalCount = report.violations.filter(v => v.severity === 'critical').length;
   const highCount = report.violations.filter(v => v.severity === 'high').length;
+
+  const filteredViolations = report.violations.filter(v => {
+    const matchesSearch = v.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          v.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          v.nycCodeCitation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          v.leaseLanguage.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSeverity = selectedSeverity === 'all' || v.severity === selectedSeverity;
+    return matchesSearch && matchesSeverity;
+  });
 
   return (
     <div className="min-h-screen px-6 py-20">
@@ -259,12 +270,64 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
           </div>
         </motion.div>
 
+        {/* Search & Filter Controls */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
+          <h2 className="text-xl font-semibold w-full md:w-auto">Potential Violations</h2>
+          
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-1 max-w-lg md:justify-end">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search violations, codes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-ghost-surface-3 border border-ghost-border rounded-xl px-4 py-2 text-sm text-ghost-text placeholder-ghost-text-muted focus:outline-none focus:border-ghost-orange transition-colors"
+              />
+            </div>
+            
+            {/* Filter Dropdown/Tabs */}
+            <div className="flex gap-1 bg-ghost-surface-3 border border-ghost-border rounded-xl p-1 text-xs">
+              {['all', 'critical', 'high', 'medium', 'low'].map((sev) => {
+                const count = sev === 'all' 
+                  ? report.violations.length 
+                  : report.violations.filter(v => v.severity === sev).length;
+                return (
+                  <button
+                    key={sev}
+                    onClick={() => setSelectedSeverity(sev)}
+                    className={`px-3 py-1.5 rounded-lg font-medium transition-all capitalize ${
+                      selectedSeverity === sev 
+                        ? 'bg-ghost-orange text-white' 
+                        : 'text-ghost-text-secondary hover:text-ghost-text'
+                    }`}
+                  >
+                    {sev} ({count})
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         {/* Violations List */}
-        <h2 className="text-xl font-semibold mb-6">Potential Violations</h2>
         <div className="space-y-4 mb-10">
-          {report.violations.map((v, i) => (
-            <ViolationCard key={v.id} violation={v} index={i} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filteredViolations.length > 0 ? (
+              filteredViolations.map((v, i) => (
+                <ViolationCard key={v.id} violation={v} index={i} />
+              ))
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="glass-card p-12 text-center text-ghost-text-secondary"
+              >
+                No violations found matching the search/filters.
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Action Buttons */}

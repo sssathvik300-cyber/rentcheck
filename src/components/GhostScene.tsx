@@ -9,8 +9,22 @@ function GhostMesh() {
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.15;
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
+      const { x, y } = state.pointer;
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(
+        meshRef.current.rotation.y,
+        x * 0.4 + state.clock.elapsedTime * 0.15,
+        0.05
+      );
+      meshRef.current.rotation.x = THREE.MathUtils.lerp(
+        meshRef.current.rotation.x,
+        -y * 0.4,
+        0.05
+      );
+      meshRef.current.position.y = THREE.MathUtils.lerp(
+        meshRef.current.position.y,
+        Math.sin(state.clock.elapsedTime * 0.5) * 0.15 + y * 0.2,
+        0.05
+      );
     }
   });
 
@@ -51,8 +65,17 @@ function Particles() {
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.02;
-      ref.current.rotation.x = state.clock.elapsedTime * 0.01;
+      const { x, y } = state.pointer;
+      ref.current.rotation.y = THREE.MathUtils.lerp(
+        ref.current.rotation.y,
+        state.clock.elapsedTime * 0.02 + x * 0.1,
+        0.05
+      );
+      ref.current.rotation.x = THREE.MathUtils.lerp(
+        ref.current.rotation.x,
+        state.clock.elapsedTime * 0.01 - y * 0.1,
+        0.05
+      );
     }
   });
 
@@ -80,8 +103,18 @@ function GlowRing() {
 
   useFrame((state) => {
     if (ref.current) {
+      const { x, y } = state.pointer;
       ref.current.rotation.z = state.clock.elapsedTime * 0.1;
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+      ref.current.rotation.x = THREE.MathUtils.lerp(
+        ref.current.rotation.x,
+        Math.sin(state.clock.elapsedTime * 0.3) * 0.2 - y * 0.3,
+        0.05
+      );
+      ref.current.rotation.y = THREE.MathUtils.lerp(
+        ref.current.rotation.y,
+        x * 0.3,
+        0.05
+      );
     }
   });
 
