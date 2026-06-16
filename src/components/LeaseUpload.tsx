@@ -56,12 +56,12 @@ export default function LeaseUpload({ onUploadComplete }: LeaseUploadProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+    <div className="min-h-[calc(100vh-4rem)] flex px-6 py-12">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-xl"
+        className="m-auto w-full max-w-xl"
       >
         {/* Header */}
         <div className="text-center mb-10">
