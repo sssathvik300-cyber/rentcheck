@@ -28,7 +28,7 @@ function App() {
     <>
       <Disclaimer />
       {/* Offset content below the fixed disclaimer bar */}
-      <div className="pt-9">
+      <div className="pt-14 sm:pt-12 md:pt-10">
         <AnimatePresence mode="wait">
           {screen === 'landing' && (
             <motion.div key="landing" variants={variants} initial="initial" animate="animate" exit="exit" transition={transition}>

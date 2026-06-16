@@ -152,7 +152,7 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
-          className="grid grid-cols-3 gap-4 mb-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
         >
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-3">
@@ -201,17 +201,17 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
         </motion.div>
 
         {/* Violations section */}
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-4">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-4">
           <h2 className="text-base font-semibold">Violations Found</h2>
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
             <input
               type="text"
               placeholder="Search..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="flex-1 sm:w-40 bg-rg-surface border border-rg-border rounded-xl px-3 py-1.5 text-sm text-rg-text placeholder-rg-text-muted focus:outline-none focus:border-rg-accent transition-colors"
+              className="flex-1 sm:w-48 bg-rg-surface border border-rg-border rounded-xl px-3 py-1.5 text-sm text-rg-text placeholder-rg-text-muted focus:outline-none focus:border-rg-accent transition-colors"
             />
-            <div className="flex gap-1 bg-rg-surface border border-rg-border rounded-xl p-1">
+            <div className="flex flex-wrap gap-1 bg-rg-surface border border-rg-border rounded-xl p-1">
               {['all', 'critical', 'high', 'medium'].map(sev => (
                 <button
                   key={sev}
