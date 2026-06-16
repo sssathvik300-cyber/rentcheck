@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LandingPage from './components/LandingPage';
 import LeaseUpload from './components/LeaseUpload';
@@ -21,6 +21,10 @@ const transition = { type: 'tween', ease: 'easeInOut', duration: 0.3 } as const;
 
 function App() {
   const [screen, setScreen] = useState<AppScreen>('landing');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [screen]);
 
   const go = (s: AppScreen) => setScreen(s);
 
