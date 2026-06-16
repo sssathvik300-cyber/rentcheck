@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Loader2, Circle, Ghost, Sparkles } from 'lucide-react';
+import { CheckCircle2, Loader2, Ghost } from 'lucide-react';
 import type { AnalysisStep } from '../types';
 import { ANALYSIS_STEPS } from '../mockData';
 
@@ -14,169 +14,133 @@ export default function AnalysisTimeline({ onComplete }: AnalysisTimelineProps) 
   useEffect(() => {
     const runAnalysis = async () => {
       for (let i = 0; i < steps.length; i++) {
-        // Set current step active
         setSteps(prev => prev.map((s, idx) => ({
           ...s,
           status: idx === i ? 'active' : idx < i ? 'complete' : 'pending',
         })));
-
-        // Wait for simulated processing
-        const delay = 800 + Math.random() * 1200;
+        const delay = 800 + Math.random() * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
-
-        // Mark complete
         setSteps(prev => prev.map((s, idx) => ({
           ...s,
           status: idx <= i ? 'complete' : idx === i + 1 ? 'active' : 'pending',
         })));
       }
-
-      // All done
-      setTimeout(() => onComplete(), 1000);
+      setTimeout(() => onComplete(), 800);
     };
-
-    const timer = setTimeout(runAnalysis, 500);
+    const timer = setTimeout(runAnalysis, 400);
     return () => clearTimeout(timer);
   }, []);
 
-  const overallProgress = ((steps.filter(s => s.status === 'complete').length) / steps.length) * 100;
+  const completedCount = steps.filter(s => s.status === 'complete').length;
+  const progress = (completedCount / steps.length) * 100;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-20">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-xl"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-lg"
       >
         {/* Header */}
-        <div className="text-center mb-12">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 rounded-3xl bg-gradient-to-br from-ghost-orange to-ghost-amber flex items-center justify-center mx-auto mb-6"
-          >
-            <Ghost className="w-8 h-8 text-black" />
-          </motion.div>
-          <h1 className="text-3xl font-bold mb-2">Analyzing Your Lease</h1>
-          <p className="text-ghost-text-secondary">
-            Our AI agents are reviewing every clause
-          </p>
+        <div className="text-center mb-10">
+          <div className="w-12 h-12 rounded-2xl bg-rg-accent flex items-center justify-center mx-auto mb-5">
+            <Ghost className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight mb-2">Analyzing Your Lease</h1>
+          <p className="text-sm text-rg-text-secondary">AI agents are reviewing every clause</p>
         </div>
 
-        {/* Overall Progress */}
+        {/* Progress */}
         <div className="mb-8">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-ghost-text-secondary">Overall progress</span>
-            <span className="text-ghost-orange font-medium">{Math.round(overallProgress)}%</span>
+          <div className="flex items-center justify-between text-xs mb-2">
+            <span className="text-rg-text-secondary">Progress</span>
+            <span className="text-rg-accent font-medium">{Math.round(progress)}%</span>
           </div>
-          <div className="h-1.5 bg-ghost-surface-4 rounded-full overflow-hidden">
+          <div className="progress-bar">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${overallProgress}%` }}
-              transition={{ duration: 0.5 }}
-              className="h-full bg-gradient-to-r from-ghost-orange to-ghost-amber rounded-full"
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4 }}
+              className="progress-fill"
             />
           </div>
         </div>
 
-        {/* Timeline */}
-        <div className="glass-card p-6 md:p-8">
-          <div className="space-y-1">
-            {steps.map((step, i) => (
-              <motion.div
-                key={step.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-              >
-                <div className="flex items-start gap-4 py-3 relative">
-                  {/* Connector line */}
-                  {i < steps.length - 1 && (
-                    <div className="absolute left-[15px] top-[40px] w-0.5 h-[calc(100%-16px)]">
-                      <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: step.status === 'complete' ? '100%' : '0%' }}
-                        transition={{ duration: 0.3 }}
-                        className="w-full bg-ghost-orange/30 rounded-full"
-                      />
-                    </div>
+        {/* Steps */}
+        <div className="card divide-y divide-rg-border">
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: i * 0.06 }}
+              className="flex items-center gap-4 px-5 py-3.5"
+            >
+              {/* Icon */}
+              <div className="flex-shrink-0 w-6 flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  {step.status === 'complete' ? (
+                    <motion.div
+                      key="complete"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-rg-success" />
+                    </motion.div>
+                  ) : step.status === 'active' ? (
+                    <motion.div key="active" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                      <Loader2 className="w-5 h-5 text-rg-accent animate-spin" />
+                    </motion.div>
+                  ) : (
+                    <div key="pending" className="w-5 h-5 rounded-full border border-rg-border" />
                   )}
+                </AnimatePresence>
+              </div>
 
-                  {/* Status icon */}
-                  <div className="flex-shrink-0 relative z-10 mt-0.5">
-                    <AnimatePresence mode="wait">
-                      {step.status === 'complete' ? (
-                        <motion.div
-                          key="complete"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          exit={{ scale: 0 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        >
-                          <CheckCircle2 className="w-8 h-8 text-ghost-orange" />
-                        </motion.div>
-                      ) : step.status === 'active' ? (
-                        <motion.div
-                          key="active"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          exit={{ scale: 0 }}
-                        >
-                          <div className="relative">
-                            <Loader2 className="w-8 h-8 text-ghost-orange animate-spin" />
-                            <div className="absolute inset-0 rounded-full pulse-orange" />
-                          </div>
-                        </motion.div>
-                      ) : (
-                        <motion.div key="pending">
-                          <Circle className="w-8 h-8 text-ghost-text-muted" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+              {/* Label */}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-medium transition-colors duration-200 ${
+                  step.status === 'active' ? 'text-rg-accent' :
+                  step.status === 'complete' ? 'text-rg-text' :
+                  'text-rg-text-muted'
+                }`}>
+                  {step.label}
+                </p>
+                <AnimatePresence>
+                  {(step.status === 'active' || step.status === 'complete') && step.detail && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="text-xs text-rg-text-secondary mt-0.5"
+                    >
+                      {step.detail}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <p className={`font-medium transition-colors duration-300 ${
-                      step.status === 'active' ? 'text-ghost-orange' :
-                      step.status === 'complete' ? 'text-ghost-text' :
-                      'text-ghost-text-muted'
-                    }`}>
-                      {step.label}
-                    </p>
-
-                    <AnimatePresence>
-                      {(step.status === 'active' || step.status === 'complete') && step.detail && (
-                        <motion.p
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="text-sm text-ghost-text-secondary mt-1"
-                        >
-                          {step.detail}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              {/* Time indicator */}
+              {step.status === 'complete' && (
+                <span className="text-xs text-rg-text-muted flex-shrink-0">Done</span>
+              )}
+            </motion.div>
+          ))}
         </div>
 
-        {/* Completion message */}
+        {/* Completion */}
         <AnimatePresence>
-          {overallProgress >= 100 && (
+          {progress >= 100 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-8 text-center"
+              className="mt-6 text-center"
             >
-              <div className="glass-orange rounded-2xl p-6 inline-flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-ghost-orange" />
-                <span className="font-medium text-ghost-orange">Analysis complete! Loading your report...</span>
-              </div>
+              <span className="badge badge-accent">
+                Analysis complete — loading report...
+              </span>
             </motion.div>
           )}
         </AnimatePresence>

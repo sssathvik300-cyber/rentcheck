@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  AlertTriangle, ShieldAlert, Info, ChevronDown, ChevronUp,
+  AlertTriangle, ShieldAlert, Info, ChevronDown,
   DollarSign, Scale, ArrowRight, Ghost, Building2,
-  TrendingUp, Printer
+  TrendingUp, Printer, BarChart3
 } from 'lucide-react';
 import type { LeaseReport, Violation } from '../types';
 
@@ -14,104 +14,56 @@ interface ViolationReportProps {
   onViewImpact: () => void;
 }
 
-function RiskGauge({ score }: { score: number }) {
-  const color = score >= 70 ? '#FF4444' : score >= 40 ? '#FFB020' : '#00D68F';
-
-  return (
-    <div className="relative w-48 h-28 mx-auto">
-      <svg viewBox="0 0 200 110" className="w-full h-full">
-        {/* Background arc */}
-        <path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth="12"
-          strokeLinecap="round"
-        />
-        {/* Score arc */}
-        <motion.path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke={color}
-          strokeWidth="12"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: score / 100 }}
-          transition={{ duration: 1.5, ease: 'easeOut', delay: 0.5 }}
-          style={{ filter: `drop-shadow(0 0 8px ${color}40)` }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-end pb-1">
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-4xl font-bold"
-          style={{ color }}
-        >
-          {score}
-        </motion.span>
-        <span className="text-xs text-ghost-text-muted uppercase tracking-wider">Risk Score</span>
-      </div>
-    </div>
-  );
-}
-
 function SeverityBadge({ severity }: { severity: Violation['severity'] }) {
   const config = {
-    critical: { label: 'Critical', className: 'badge-critical' },
-    high: { label: 'High', className: 'badge-high' },
-    medium: { label: 'Medium', className: 'badge-medium' },
-    low: { label: 'Low', className: 'badge-low' },
+    critical: { label: 'Critical', cls: 'badge-critical' },
+    high: { label: 'High', cls: 'badge-high' },
+    medium: { label: 'Medium', cls: 'badge-medium' },
+    low: { label: 'Low', cls: 'badge-low' },
   };
-  const { label, className } = config[severity];
-
+  const { label, cls } = config[severity];
   return (
-    <span className={`${className} px-3 py-1 rounded-full text-xs font-semibold`}>
-      {label}
-    </span>
+    <span className={`${cls} px-2.5 py-1 rounded-full text-xs font-medium`}>{label}</span>
   );
 }
 
-function ViolationCard({ violation, index }: { violation: Violation; index: number }) {
+function ViolationRow({ violation, index }: { violation: Violation; index: number }) {
   const [expanded, setExpanded] = useState(false);
+
+  const icons = {
+    critical: <ShieldAlert className="w-4 h-4 text-rg-danger" />,
+    high: <AlertTriangle className="w-4 h-4 text-rg-warning" />,
+    medium: <Info className="w-4 h-4 text-rg-info" />,
+    low: <Info className="w-4 h-4 text-rg-text-muted" />,
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 + index * 0.1 }}
-      className="glass-card overflow-hidden"
+      transition={{ delay: 0.1 + index * 0.06 }}
+      className="border-b border-rg-border last:border-0"
     >
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-6 flex items-start gap-4 text-left hover:bg-white/[0.02] transition-colors"
+        className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-white/[0.02] transition-colors"
       >
-        <div className="flex-shrink-0 mt-1">
-          {violation.severity === 'critical' ? (
-            <ShieldAlert className="w-5 h-5 text-ghost-danger" />
-          ) : violation.severity === 'high' ? (
-            <AlertTriangle className="w-5 h-5 text-ghost-warning" />
-          ) : (
-            <Info className="w-5 h-5 text-ghost-info" />
-          )}
-        </div>
+        <div className="flex-shrink-0">{icons[violation.severity]}</div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1 flex-wrap">
-            <h3 className="font-semibold">{violation.title}</h3>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="text-sm font-medium">{violation.title}</span>
             <SeverityBadge severity={violation.severity} />
           </div>
-          <p className="text-sm text-ghost-text-secondary">{violation.category}</p>
-          {violation.estimatedImpact > 0 && (
-            <div className="flex items-center gap-1.5 mt-2 text-ghost-orange text-sm font-medium">
-              <DollarSign className="w-4 h-4" />
-              ${violation.estimatedImpact.toLocaleString()}/year estimated impact
-            </div>
-          )}
+          <p className="text-xs text-rg-text-muted mt-0.5">{violation.category}</p>
         </div>
-        <div className="flex-shrink-0">
-          {expanded ? <ChevronUp className="w-5 h-5 text-ghost-text-muted" /> : <ChevronDown className="w-5 h-5 text-ghost-text-muted" />}
-        </div>
+        {violation.estimatedImpact > 0 && (
+          <span className="text-sm font-medium text-rg-accent flex-shrink-0 hidden sm:block">
+            ${violation.estimatedImpact.toLocaleString()}/yr
+          </span>
+        )}
+        <ChevronDown
+          className={`w-4 h-4 text-rg-text-muted flex-shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+        />
       </button>
 
       <AnimatePresence>
@@ -120,31 +72,29 @@ function ViolationCard({ violation, index }: { violation: Violation; index: numb
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-6 pt-2 border-t border-ghost-border space-y-4">
+            <div className="px-5 pb-5 pt-1 grid grid-cols-1 md:grid-cols-3 gap-4 bg-rg-surface/50">
               <div>
-                <p className="text-xs font-medium text-ghost-text-muted uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium text-rg-text-muted uppercase tracking-wider mb-2">
                   Lease Language
                 </p>
-                <div className="glass rounded-xl p-4 text-sm text-ghost-text-secondary italic">
-                  {violation.leaseLanguage}
-                </div>
+                <p className="text-xs text-rg-text-secondary italic leading-relaxed">
+                  "{violation.leaseLanguage}"
+                </p>
               </div>
               <div>
-                <p className="text-xs font-medium text-ghost-text-muted uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium text-rg-text-muted uppercase tracking-wider mb-2">
                   NYC Code Citation
                 </p>
-                <div className="glass-orange rounded-xl p-4 text-sm text-ghost-orange">
-                  {violation.nycCodeCitation}
-                </div>
+                <p className="text-xs text-rg-accent">{violation.nycCodeCitation}</p>
               </div>
               <div>
-                <p className="text-xs font-medium text-ghost-text-muted uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium text-rg-text-muted uppercase tracking-wider mb-2">
                   Recommended Action
                 </p>
-                <p className="text-sm text-ghost-text-secondary leading-relaxed">
+                <p className="text-xs text-rg-text-secondary leading-relaxed">
                   {violation.recommendedAction}
                 </p>
               </div>
@@ -163,85 +113,70 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
   const criticalCount = report.violations.filter(v => v.severity === 'critical').length;
   const highCount = report.violations.filter(v => v.severity === 'high').length;
 
-  const filteredViolations = report.violations.filter(v => {
-    const matchesSearch = v.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          v.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          v.nycCodeCitation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          v.leaseLanguage.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSeverity = selectedSeverity === 'all' || v.severity === selectedSeverity;
-    return matchesSearch && matchesSeverity;
+  const filtered = report.violations.filter(v => {
+    const matchSearch = v.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchSev = selectedSeverity === 'all' || v.severity === selectedSeverity;
+    return matchSearch && matchSev;
   });
 
   return (
-    <div className="min-h-screen px-6 py-20">
+    <div className="min-h-screen px-6 py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12 relative"
+          className="flex items-center justify-between mb-10"
         >
-          <div className="absolute right-0 top-0 hidden md:block">
-            <button 
-              onClick={() => window.print()}
-              className="btn-secondary px-4 py-2 flex items-center gap-2 text-sm"
-            >
-              <Printer className="w-4 h-4" />
-              Print Report
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rg-accent flex items-center justify-center">
+              <Ghost className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">Violation Report</h1>
+              <p className="text-xs text-rg-text-secondary">{report.propertyAddress} · Unit {report.unitNumber}</p>
+            </div>
           </div>
-          <div className="inline-flex items-center gap-2 glass-orange rounded-full px-5 py-2 mb-6 text-sm text-ghost-orange font-medium">
-            <Ghost className="w-4 h-4" />
-            Lease Analysis Complete
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Violation Report</h1>
-          <p className="text-ghost-text-secondary">
-            {report.propertyAddress} · Unit {report.unitNumber}
-          </p>
+          <button
+            onClick={() => window.print()}
+            className="btn-secondary py-2 px-4 text-xs flex items-center gap-1.5 hidden md:flex"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            Print
+          </button>
         </motion.div>
 
-        {/* Risk Score + Summary Cards */}
+        {/* Summary Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
+          transition={{ delay: 0.08 }}
+          className="grid grid-cols-3 gap-4 mb-8"
         >
-          <div className="glass-card p-6 md:col-span-1">
-            <RiskGauge score={report.riskScore} />
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="w-4 h-4 text-rg-danger" />
+              <span className="text-xs text-rg-text-muted">Risk Score</span>
+            </div>
+            <p className="text-2xl font-bold text-rg-danger">{report.riskScore}</p>
+            <p className="text-xs text-rg-text-muted mt-1">out of 100</p>
           </div>
-
-          <div className="glass-card p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-ghost-danger/10 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-ghost-danger" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{report.violations.length}</p>
-                <p className="text-sm text-ghost-text-secondary">Violations Found</p>
-              </div>
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-rg-warning" />
+              <span className="text-xs text-rg-text-muted">Violations</span>
             </div>
-            <div className="flex gap-4 text-sm">
-              <span className="text-ghost-danger">{criticalCount} critical</span>
-              <span className="text-ghost-warning">{highCount} high</span>
-            </div>
+            <p className="text-2xl font-bold">{report.violations.length}</p>
+            <p className="text-xs text-rg-text-muted mt-1">{criticalCount} critical, {highCount} high</p>
           </div>
-
-          <div className="glass-card p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-ghost-orange/10 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-ghost-orange" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold gradient-text">
-                  ${report.totalFinancialImpact.toLocaleString()}
-                </p>
-                <p className="text-sm text-ghost-text-secondary">Est. Annual Impact</p>
-              </div>
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <DollarSign className="w-4 h-4 text-rg-accent" />
+              <span className="text-xs text-rg-text-muted">Impact</span>
             </div>
-            <div className="text-sm text-ghost-text-muted">
-              Potential recovery amount
-            </div>
+            <p className="text-2xl font-bold text-rg-accent">${report.totalFinancialImpact.toLocaleString()}</p>
+            <p className="text-xs text-rg-text-muted mt-1">estimated / year</p>
           </div>
         </motion.div>
 
@@ -249,125 +184,109 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card p-6 mb-10 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm"
+          transition={{ delay: 0.14 }}
+          className="card px-5 py-4 mb-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm"
         >
-          <div>
-            <p className="text-ghost-text-muted mb-1">Landlord</p>
-            <p className="font-medium">{report.landlordName}</p>
-          </div>
-          <div>
-            <p className="text-ghost-text-muted mb-1">Monthly Rent</p>
-            <p className="font-medium">${report.monthlyRent.toLocaleString()}</p>
-          </div>
-          <div>
-            <p className="text-ghost-text-muted mb-1">Lease Period</p>
-            <p className="font-medium">{report.leaseStartDate} — {report.leaseEndDate}</p>
-          </div>
-          <div>
-            <p className="text-ghost-text-muted mb-1">Analysis Date</p>
-            <p className="font-medium">{report.analysisDate}</p>
-          </div>
+          {[
+            ['Landlord', report.landlordName],
+            ['Monthly Rent', `$${report.monthlyRent.toLocaleString()}`],
+            ['Lease Period', `${report.leaseStartDate} — ${report.leaseEndDate}`],
+            ['Analysis Date', report.analysisDate],
+          ].map(([label, value]) => (
+            <div key={label}>
+              <p className="text-xs text-rg-text-muted mb-1">{label}</p>
+              <p className="text-sm font-medium text-rg-text">{value}</p>
+            </div>
+          ))}
         </motion.div>
 
-        {/* Search & Filter Controls */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
-          <h2 className="text-xl font-semibold w-full md:w-auto">Potential Violations</h2>
-          
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-1 max-w-lg md:justify-end">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Search violations, codes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-ghost-surface-3 border border-ghost-border rounded-xl px-4 py-2 text-sm text-ghost-text placeholder-ghost-text-muted focus:outline-none focus:border-ghost-orange transition-colors"
-              />
-            </div>
-            
-            {/* Filter Dropdown/Tabs */}
-            <div className="flex gap-1 bg-ghost-surface-3 border border-ghost-border rounded-xl p-1 text-xs">
-              {['all', 'critical', 'high', 'medium', 'low'].map((sev) => {
-                const count = sev === 'all' 
-                  ? report.violations.length 
-                  : report.violations.filter(v => v.severity === sev).length;
-                return (
-                  <button
-                    key={sev}
-                    onClick={() => setSelectedSeverity(sev)}
-                    className={`px-3 py-1.5 rounded-lg font-medium transition-all capitalize ${
-                      selectedSeverity === sev 
-                        ? 'bg-ghost-orange text-white' 
-                        : 'text-ghost-text-secondary hover:text-ghost-text'
-                    }`}
-                  >
-                    {sev} ({count})
-                  </button>
-                );
-              })}
+        {/* Violations section */}
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-4">
+          <h2 className="text-base font-semibold">Violations Found</h2>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="flex-1 sm:w-40 bg-rg-surface border border-rg-border rounded-xl px-3 py-1.5 text-sm text-rg-text placeholder-rg-text-muted focus:outline-none focus:border-rg-accent transition-colors"
+            />
+            <div className="flex gap-1 bg-rg-surface border border-rg-border rounded-xl p-1">
+              {['all', 'critical', 'high', 'medium'].map(sev => (
+                <button
+                  key={sev}
+                  onClick={() => setSelectedSeverity(sev)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
+                    selectedSeverity === sev
+                      ? 'bg-rg-accent text-white'
+                      : 'text-rg-text-secondary hover:text-rg-text'
+                  }`}
+                >
+                  {sev}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Violations List */}
-        <div className="space-y-4 mb-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="card overflow-hidden mb-8"
+        >
           <AnimatePresence mode="popLayout">
-            {filteredViolations.length > 0 ? (
-              filteredViolations.map((v, i) => (
-                <ViolationCard key={v.id} violation={v} index={i} />
-              ))
+            {filtered.length > 0 ? (
+              filtered.map((v, i) => <ViolationRow key={v.id} violation={v} index={i} />)
             ) : (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="glass-card p-12 text-center text-ghost-text-secondary"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="px-5 py-10 text-center text-sm text-rg-text-muted"
               >
-                No violations found matching the search/filters.
+                No violations match the current filter.
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* Action Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-3"
         >
-          <button onClick={onViewLandlord} className="glass-card p-5 flex items-center gap-4 group text-left">
-            <div className="w-10 h-10 rounded-xl bg-ghost-info/10 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-ghost-info" />
+          <button onClick={onViewLandlord} className="card card-interactive p-4 flex items-center gap-3 text-left">
+            <div className="w-9 h-9 rounded-xl bg-rg-info/10 flex items-center justify-center flex-shrink-0">
+              <Building2 className="w-4 h-4 text-rg-info" />
             </div>
-            <div className="flex-1">
-              <p className="font-medium">Landlord Intel</p>
-              <p className="text-xs text-ghost-text-secondary">HPD violations & history</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium">Landlord Intel</p>
+              <p className="text-xs text-rg-text-secondary">HPD violations & history</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-ghost-text-muted group-hover:text-ghost-text transition-colors" />
+            <ArrowRight className="w-4 h-4 text-rg-text-muted" />
           </button>
 
-          <button onClick={onGenerateLetter} className="glass-card p-5 flex items-center gap-4 group text-left">
-            <div className="w-10 h-10 rounded-xl bg-ghost-warning/10 flex items-center justify-center">
-              <Scale className="w-5 h-5 text-ghost-warning" />
+          <button onClick={onGenerateLetter} className="card card-interactive p-4 flex items-center gap-3 text-left">
+            <div className="w-9 h-9 rounded-xl bg-rg-warning/10 flex items-center justify-center flex-shrink-0">
+              <Scale className="w-4 h-4 text-rg-warning" />
             </div>
-            <div className="flex-1">
-              <p className="font-medium">Demand Letter</p>
-              <p className="text-xs text-ghost-text-secondary">Generate legal notice</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium">Demand Letter</p>
+              <p className="text-xs text-rg-text-secondary">Generate legal notice</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-ghost-text-muted group-hover:text-ghost-text transition-colors" />
+            <ArrowRight className="w-4 h-4 text-rg-text-muted" />
           </button>
 
-          <button onClick={onViewImpact} className="btn-primary flex items-center gap-4 text-left p-5 rounded-[20px]">
-            <div className="w-10 h-10 rounded-xl bg-black/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5" />
+          <button onClick={onViewImpact} className="btn-primary p-4 flex items-center gap-3 rounded-2xl text-left">
+            <div className="w-9 h-9 rounded-xl bg-black/20 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-4 h-4" />
             </div>
-            <div className="flex-1">
-              <p className="font-medium">View Impact</p>
-              <p className="text-xs opacity-80">Financial summary</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium">View Impact</p>
+              <p className="text-xs opacity-75">Financial summary</p>
             </div>
-            <ArrowRight className="w-4 h-4 opacity-70" />
+            <ArrowRight className="w-4 h-4 opacity-60" />
           </button>
         </motion.div>
       </div>

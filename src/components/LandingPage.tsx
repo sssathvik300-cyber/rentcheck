@@ -1,255 +1,441 @@
 import { motion } from 'framer-motion';
-import { Ghost, Shield, ArrowRight, CheckCircle2, Building2, Scale, FileSearch } from 'lucide-react';
-import GhostScene from './GhostScene';
+import {
+  Ghost, Upload, ArrowRight, FileSearch, ShieldCheck,
+  AlertTriangle, FileText,
+  Download, Copy, Mail, CheckCircle2, BarChart3, Scale,
+  Cpu, Eye, Pen, BookOpen
+} from 'lucide-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
 }
 
+const fadeIn = {
+  initial: { opacity: 0, y: 12 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+};
+
+const stagger = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+};
+
 export default function LandingPage({ onGetStarted }: LandingPageProps) {
-  const stats = [
-    { value: '2.4M+', label: 'NYC rent-stabilized apartments' },
-    { value: '67%', label: 'Leases with violations' },
-    { value: '$3,200', label: 'Average overpayment/year' },
-  ];
-
-  const features = [
-    { icon: FileSearch, title: 'AI Lease Analysis', desc: 'Our agents parse every clause and cross-reference NYC housing law in seconds.' },
-    { icon: Shield, title: 'Legal Compliance Check', desc: 'Checks rent stabilization, disclosure requirements, and 200+ housing regulations.' },
-    { icon: Scale, title: 'Instant Legal Action', desc: 'Generate court-ready demand letters citing specific code violations.' },
-    { icon: Building2, title: 'Landlord Intelligence', desc: 'Access HPD violations, complaints, and building risk scores.' },
-  ];
-
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* 3D Background */}
-      <GhostScene className="opacity-40" />
-
-      {/* Nav */}
+    <div className="min-h-screen">
+      {/* ─── NAV ─── */}
       <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center justify-between px-6 md:px-16 py-5 border-b border-rg-border"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-ghost-orange to-ghost-amber flex items-center justify-center">
-            <Ghost className="w-5 h-5 text-black" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-rg-accent flex items-center justify-center">
+            <Ghost className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight">RentGhost</span>
+          <span className="text-base font-semibold tracking-tight">RentGhost</span>
         </div>
-        <div className="hidden md:flex items-center gap-8 text-sm text-ghost-text-secondary">
-          <a href="#features" className="hover:text-ghost-text transition-colors">Features</a>
-          <a href="#how-it-works" className="hover:text-ghost-text transition-colors">How it works</a>
-          <motion.button 
-            whileHover={{ scale: 1.02 }} 
-            whileTap={{ scale: 0.98 }} 
-            onClick={onGetStarted} 
-            className="btn-primary text-sm py-2.5 px-6"
-          >
+        <div className="hidden md:flex items-center gap-8 text-sm text-rg-text-secondary">
+          <a href="#how-it-works" className="hover:text-rg-text transition-colors">How it works</a>
+          <a href="#agents" className="hover:text-rg-text transition-colors">AI Pipeline</a>
+          <a href="#findings" className="hover:text-rg-text transition-colors">Findings</a>
+          <button onClick={onGetStarted} className="btn-primary text-sm py-2.5 px-5">
             Upload Lease
-          </motion.button>
+          </button>
         </div>
       </motion.nav>
 
-      {/* Hero */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-24 md:pt-32 pb-32">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="inline-flex items-center gap-2 glass-orange rounded-full px-5 py-2 mb-8 text-sm text-ghost-orange font-medium"
-          >
-            <span className="w-2 h-2 rounded-full bg-ghost-orange animate-pulse" />
-            NYC Renter Protection Tool
+      {/* ─── HERO ─── */}
+      <section className="px-6 md:px-16 pt-24 md:pt-32 pb-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          {/* Left */}
+          <motion.div {...fadeIn} transition={{ duration: 0.5 }}>
+            <div className="badge badge-accent mb-6">
+              <div className="pulse-dot" />
+              NYC Tenant Protection Platform
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] mb-6">
+              Your landlord has
+              <br />a lawyer.
+              <br />
+              <span className="accent-text">Now you do too.</span>
+            </h1>
+
+            <p className="text-lg text-rg-text-secondary leading-relaxed mb-10 max-w-lg">
+              Upload your lease and discover hidden violations, illegal rent
+              increases, and tenant rights issues in under 60 seconds.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onGetStarted}
+                className="btn-primary text-base py-3.5 px-7"
+              >
+                Upload Lease
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+              <button className="btn-secondary text-base py-3.5 px-7">
+                View Sample Report
+              </button>
+            </div>
+
+            <p className="text-sm text-rg-text-muted leading-relaxed">
+              Powered by NYC housing regulations, violation databases, and AI analysis.
+            </p>
           </motion.div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] mb-6">
-            Your lease might be{' '}
-            <span className="gradient-text">illegal.</span>
-            <br />
-            <span className="text-ghost-text-secondary text-4xl md:text-5xl lg:text-6xl font-semibold">
-              Find out in 60 seconds.
-            </span>
-          </h1>
-
-          <p className="text-lg md:text-xl text-ghost-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
-            Upload your lease. Our AI agents scan every clause against NYC housing law,
-            reveal hidden violations, and generate legal action documents — instantly.
-          </p>
-
+          {/* Right — Interactive Report Preview */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            {...fadeIn}
+            transition={{ duration: 0.5, delay: 0.15 }}
           >
+            <div className="report-preview">
+              {/* Report header */}
+              <div className="report-header">
+                <div className="flex items-center gap-2">
+                  <Ghost className="w-4 h-4 text-rg-accent" />
+                  <span className="text-sm font-medium">Lease Analysis Report</span>
+                </div>
+                <span className="badge badge-danger text-xs py-1 px-2.5">3 violations</span>
+              </div>
+
+              {/* Risk Score Row */}
+              <div className="report-row">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-rg-accent-muted flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-rg-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Risk Score</p>
+                    <p className="text-xs text-rg-text-muted">Overall assessment</p>
+                  </div>
+                </div>
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                  className="text-2xl font-bold text-rg-danger"
+                >
+                  87
+                </motion.span>
+              </div>
+
+              {/* Violations */}
+              <div className="report-row">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4 text-rg-danger" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Illegal Rent Increase</p>
+                    <p className="text-xs text-rg-text-muted">Rent Stabilization Code §26-511</p>
+                  </div>
+                </div>
+                <span className="badge badge-danger text-xs py-1 px-2.5">High</span>
+              </div>
+
+              <div className="report-row">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <ShieldCheck className="w-4 h-4 text-rg-warning" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Missing Lead Paint Disclosure</p>
+                    <p className="text-xs text-rg-text-muted">NYC Admin Code §27-2056.4</p>
+                  </div>
+                </div>
+                <span className="badge badge-warning text-xs py-1 px-2.5">Medium</span>
+              </div>
+
+              <div className="report-row">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center">
+                    <Scale className="w-4 h-4 text-rg-danger" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Excessive Late Fee Clause</p>
+                    <p className="text-xs text-rg-text-muted">Real Property Law §238-a</p>
+                  </div>
+                </div>
+                <span className="badge badge-danger text-xs py-1 px-2.5">High</span>
+              </div>
+
+              {/* Savings */}
+              <div className="px-5 py-4 bg-rg-accent-muted">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-rg-accent">Potential Savings</span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 }}
+                    className="text-xl font-bold text-rg-accent"
+                  >
+                    $4,280/year
+                  </motion.span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" className="section section-divider px-6 md:px-16">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeIn} transition={{ duration: 0.4 }} className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              How it works
+            </h2>
+            <p className="text-rg-text-secondary text-lg">Four steps. Under 60 seconds.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-0 items-start">
+            {[
+              { icon: Upload, title: 'Upload Lease', desc: 'Drop your PDF' },
+              { icon: Cpu, title: 'AI Analysis', desc: 'Clause-by-clause scan' },
+              { icon: Eye, title: 'Violation Detection', desc: 'NYC law cross-reference' },
+              { icon: FileText, title: 'Demand Letter', desc: 'Court-ready document' },
+            ].map((step, i) => (
+              <motion.div
+                key={step.title}
+                {...stagger}
+                transition={{ delay: i * 0.1, duration: 0.35 }}
+                className="flex flex-col items-center text-center relative"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-rg-surface border border-rg-border flex items-center justify-center mb-5">
+                  <step.icon className="w-6 h-6 text-rg-accent" />
+                </div>
+                <h3 className="text-base font-semibold mb-1.5">{step.title}</h3>
+                <p className="text-sm text-rg-text-secondary">{step.desc}</p>
+
+                {/* Connector arrow (desktop only, not on last) */}
+                {i < 3 && (
+                  <div className="hidden md:block absolute top-7 left-[calc(50%+40px)] w-[calc(100%-80px)]">
+                    <div className="step-connector" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── AI AGENT PIPELINE ─── */}
+      <section id="agents" className="section section-divider px-6 md:px-16">
+        <div className="max-w-3xl mx-auto">
+          <motion.div {...fadeIn} transition={{ duration: 0.4 }} className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              AI Agent Pipeline
+            </h2>
+            <p className="text-rg-text-secondary text-lg">
+              Five specialized agents work sequentially to analyze your lease.
+            </p>
+          </motion.div>
+
+          <div className="flex flex-col items-center">
+            {[
+              { icon: FileSearch, name: 'Lease Extraction Agent', desc: 'Parses and structures your PDF' },
+              { icon: BookOpen, name: 'Clause Classification Agent', desc: 'Categorizes each clause by type' },
+              { icon: ShieldCheck, name: 'NYC Compliance Agent', desc: 'Cross-references housing regulations' },
+              { icon: AlertTriangle, name: 'Violation Detection Agent', desc: 'Identifies illegal provisions' },
+              { icon: Pen, name: 'Demand Letter Agent', desc: 'Generates court-ready documents' },
+            ].map((agent, i) => (
+              <motion.div
+                key={agent.name}
+                {...stagger}
+                transition={{ delay: i * 0.08, duration: 0.35 }}
+                className="w-full max-w-md"
+              >
+                <div className="agent-card flex items-center gap-4 text-left">
+                  <div className="w-10 h-10 rounded-xl bg-rg-accent-muted flex items-center justify-center flex-shrink-0">
+                    <agent.icon className="w-5 h-5 text-rg-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{agent.name}</p>
+                    <p className="text-xs text-rg-text-secondary">{agent.desc}</p>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-rg-success ml-auto flex-shrink-0" />
+                </div>
+                {i < 4 && <div className="pipeline-line" />}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SAMPLE FINDINGS ─── */}
+      <section id="findings" className="section section-divider px-6 md:px-16">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeIn} transition={{ duration: 0.4 }} className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Sample Findings
+            </h2>
+            <p className="text-rg-text-secondary text-lg">
+              Real violations our AI agents detect.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                title: 'Illegal Rent Increase',
+                severity: 'High',
+                severityClass: 'badge-danger',
+                evidence: '"Rent shall increase 8% annually at landlord\'s discretion."',
+                code: 'NYC Rent Stabilization Code §26-511',
+                action: 'File complaint with DHCR for rent overcharge determination.',
+              },
+              {
+                title: 'Missing Lead Paint Disclosure',
+                severity: 'Medium',
+                severityClass: 'badge-warning',
+                evidence: 'No EPA Form or lead paint disclosure found in lease document.',
+                code: 'NYC Admin Code §27-2056.4',
+                action: 'Request immediate disclosure and lead inspection from landlord.',
+              },
+              {
+                title: 'Excessive Late Fee Clause',
+                severity: 'High',
+                severityClass: 'badge-danger',
+                evidence: '"A late fee of $150 will be charged for any payment received after the 1st."',
+                code: 'Real Property Law §238-a',
+                action: 'Late fees exceeding $50 or 5% of rent are unenforceable.',
+              },
+            ].map((finding, i) => (
+              <motion.div
+                key={finding.title}
+                {...stagger}
+                transition={{ delay: i * 0.1, duration: 0.35 }}
+                className="card p-6 flex flex-col gap-4"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-semibold">{finding.title}</h3>
+                  <span className={`${finding.severityClass} px-2.5 py-1 rounded-full text-xs font-medium`}>
+                    {finding.severity}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-xs text-rg-text-muted uppercase tracking-wider mb-1.5 font-medium">Evidence</p>
+                  <p className="text-sm text-rg-text-secondary italic">"{finding.evidence}"</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-rg-text-muted uppercase tracking-wider mb-1.5 font-medium">NYC Code</p>
+                  <p className="text-sm text-rg-accent">{finding.code}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-rg-text-muted uppercase tracking-wider mb-1.5 font-medium">Action</p>
+                  <p className="text-sm text-rg-text-secondary">{finding.action}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── DEMAND LETTER ─── */}
+      <section className="section section-divider px-6 md:px-16">
+        <div className="max-w-4xl mx-auto">
+          <motion.div {...fadeIn} transition={{ duration: 0.4 }} className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Demand Letter Generator
+            </h2>
+            <p className="text-rg-text-secondary text-lg">
+              Court-ready legal documents, generated automatically from your analysis.
+            </p>
+          </motion.div>
+
+          <motion.div {...fadeIn} transition={{ duration: 0.4, delay: 0.1 }}>
+            <div className="letter-preview mb-6">
+              <p className="mb-6">
+                <strong className="text-rg-text">RE: Notice of Lease Violations and Demand for Remediation</strong>
+              </p>
+              <p className="mb-4">Dear Metropolitan Properties LLC,</p>
+              <p className="mb-4">
+                I am writing to formally notify you of multiple violations identified in my lease agreement
+                for the premises located at 142 East 4th Street, Unit 3B, New York, NY 10009.
+              </p>
+              <p className="mb-4">
+                Pursuant to my rights under the New York City Rent Stabilization Code, the NYC Administrative Code,
+                and the Real Property Law of the State of New York, I have identified the following violations:
+              </p>
+              <p className="mb-2"><strong className="text-rg-text">1. Illegal Rent Increase</strong></p>
+              <p className="mb-4 pl-4">
+                The lease stipulates an 8% annual increase at landlord's discretion, which violates
+                Rent Stabilization Code §26-511. The legal maximum increase for one-year leases is
+                determined by the RGB and currently set at 3.25%.
+              </p>
+              <p className="mb-2"><strong className="text-rg-text">2. Missing Lead Paint Disclosure</strong></p>
+              <p className="pl-4">
+                No EPA disclosure form regarding lead-based paint hazards was provided as required
+                by NYC Administrative Code §27-2056.4 for buildings constructed prior to 1978...
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button className="btn-primary py-2.5 px-5 text-sm">
+                <Download className="w-4 h-4" />
+                Export PDF
+              </button>
+              <button className="btn-secondary py-2.5 px-5 text-sm flex items-center gap-2">
+                <Copy className="w-4 h-4" />
+                Copy Text
+              </button>
+              <button className="btn-secondary py-2.5 px-5 text-sm flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Email to Landlord
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── FINAL CTA ─── */}
+      <section className="section px-6 md:px-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div {...fadeIn} transition={{ duration: 0.5 }}>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-4">
+              Stop guessing.
+              <br />
+              <span className="accent-text">Know your rights.</span>
+            </h2>
+            <p className="text-lg text-rg-text-secondary mb-10">
+              Upload your lease now.
+            </p>
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={onGetStarted}
-              className="btn-primary text-lg py-4 px-10 flex items-center gap-3 glow-orange-strong"
+              className="btn-primary text-base py-4 px-10"
             >
               Upload Your Lease
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
-            <motion.button 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-secondary py-4 px-8 text-lg"
-            >
-              View Sample Report
+              <ArrowRight className="w-4 h-4" />
             </motion.button>
           </motion.div>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20"
-        >
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 + i * 0.15 }}
-              className="glass-card p-8 text-center"
-            >
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">{stat.value}</div>
-              <div className="text-sm text-ghost-text-secondary">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Features */}
-        <div id="features" className="mt-32">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-center mb-4"
-          >
-            Everything you need to{' '}
-            <span className="gradient-text">fight back</span>
-          </motion.h2>
-          <p className="text-ghost-text-secondary text-center mb-16 text-lg">
-            Powered by AI agents trained on NYC housing law
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -8 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.3 }}
-                className="glass-card p-10 md:p-12 group"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ghost-orange/20 to-transparent flex items-center justify-center mb-5 group-hover:from-ghost-orange/30 transition-all">
-                  <feature.icon className="w-6 h-6 text-ghost-orange" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-ghost-text-secondary leading-relaxed">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
+      </section>
 
-        {/* How it works */}
-        <div id="how-it-works" className="mt-32">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-center mb-16"
-          >
-            Three steps. <span className="gradient-text">Zero hassle.</span>
-          </motion.h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Upload', desc: 'Drop your lease PDF. We handle the rest.' },
-              { step: '02', title: 'Analyze', desc: 'AI agents scan every clause against NYC law.' },
-              { step: '03', title: 'Act', desc: 'Get your violation report and legal documents.' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="text-center"
-              >
-                <div className="text-6xl font-black gradient-text mb-4">{item.step}</div>
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-ghost-text-secondary">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Trust */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-32 glass-card p-10 text-center"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <CheckCircle2 className="w-6 h-6 text-ghost-success" />
-            <span className="text-sm font-medium text-ghost-success">Trusted by NYC Tenants</span>
-          </div>
-          <p className="text-2xl md:text-3xl font-semibold mb-2">
-            "RentGhost found $4,280 in illegal overcharges in my lease."
-          </p>
-          <p className="text-ghost-text-secondary">
-            — Sarah M., Washington Heights
-          </p>
-        </motion.div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-24 text-center"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to protect your rights?
-          </h2>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onGetStarted}
-            className="btn-primary text-lg py-4 px-10 glow-orange-strong"
-          >
-            Upload Your Lease Now
-          </motion.button>
-        </motion.div>
-      </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-ghost-border px-6 py-8 mt-20">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-ghost-text-muted">
+      {/* ─── FOOTER ─── */}
+      <footer className="border-t border-rg-border px-6 md:px-16 py-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-rg-text-muted">
           <div className="flex items-center gap-2">
-            <Ghost className="w-4 h-4 text-ghost-orange" />
+            <Ghost className="w-4 h-4 text-rg-accent" />
             <span>RentGhost © 2024. Built for NYC renters.</span>
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-ghost-text transition-colors">Privacy</a>
-            <a href="#" className="hover:text-ghost-text transition-colors">Terms</a>
-            <a href="#" className="hover:text-ghost-text transition-colors">Contact</a>
+            <a href="#" className="hover:text-rg-text transition-colors">Privacy</a>
+            <a href="#" className="hover:text-rg-text transition-colors">Terms</a>
+            <a href="#" className="hover:text-rg-text transition-colors">Contact</a>
           </div>
         </div>
       </footer>

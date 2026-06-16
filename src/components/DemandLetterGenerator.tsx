@@ -22,8 +22,6 @@ export default function DemandLetterGenerator({ letter, onBack }: DemandLetterGe
   };
 
   const handleDownload = () => {
-    // In a real app, this would use a library like jspdf to generate a PDF
-    // For this demo, we'll create a blob and trigger a download
     const blob = new Blob([letter.body], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -36,102 +34,127 @@ export default function DemandLetterGenerator({ letter, onBack }: DemandLetterGe
   };
 
   return (
-    <div className="min-h-screen px-6 py-20">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen px-6 py-16 md:py-20">
+      <div className="max-w-3xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
+          className="mb-10"
         >
-          <div>
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 text-ghost-text-secondary hover:text-ghost-text transition-colors mb-6"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Report
-            </button>
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-sm text-rg-text-secondary hover:text-rg-text transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Report
+          </button>
 
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-ghost-warning/20 to-ghost-warning/5 flex items-center justify-center">
-                <FileText className="w-7 h-7 text-ghost-warning" />
+              <div className="w-12 h-12 rounded-2xl bg-rg-warning/10 border border-rg-warning/20 flex items-center justify-center">
+                <FileText className="w-6 h-6 text-rg-warning" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Demand Letter</h1>
-                <p className="text-ghost-text-secondary">Ready to send to your landlord</p>
+                <h1 className="text-xl font-bold tracking-tight">Demand Letter</h1>
+                <p className="text-sm text-rg-text-secondary">Ready to send to your landlord</p>
               </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleCopy}
-              className="btn-secondary py-2.5 px-4 flex items-center gap-2"
-            >
-              {copied ? <CheckCircle2 className="w-4 h-4 text-ghost-success" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'Copied!' : 'Copy Text'}
-            </button>
-            <button
-              onClick={handleDownload}
-              className="btn-primary py-2.5 px-4 flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download
-            </button>
-            <button className="w-11 h-11 rounded-xl glass flex items-center justify-center hover:bg-white/10 transition-colors tooltip-trigger" title="Email to Landlord">
-              <Mail className="w-5 h-5 text-ghost-orange" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="btn-secondary py-2 px-4 text-sm flex items-center gap-1.5"
+              >
+                {copied
+                  ? <><CheckCircle2 className="w-4 h-4 text-rg-success" /> Copied</>
+                  : <><Copy className="w-4 h-4" /> Copy</>
+                }
+              </button>
+              <button
+                onClick={handleDownload}
+                className="btn-primary py-2 px-4 text-sm"
+              >
+                <Download className="w-4 h-4" />
+                Download
+              </button>
+              <button
+                title="Email to Landlord"
+                className="w-9 h-9 rounded-xl border border-rg-border flex items-center justify-center hover:bg-white/5 transition-colors"
+              >
+                <Mail className="w-4 h-4 text-rg-text-secondary" />
+              </button>
+            </div>
           </div>
         </motion.div>
 
         {/* Letter Preview */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="glass-card p-8 md:p-12 relative overflow-hidden group"
+          transition={{ delay: 0.1 }}
+          className="card overflow-hidden"
         >
-          {/* Subtle noise texture */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none noise-overlay" />
+          {/* Document toolbar */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-rg-border bg-rg-surface-2">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-rg-text-muted" />
+              <span className="text-xs text-rg-text-secondary font-medium">
+                Demand_Letter_{letter.landlordName.replace(/\s+/g, '_')}.pdf
+              </span>
+            </div>
+            <span className="badge text-xs py-0.5 px-2">Ready</span>
+          </div>
 
-          {/* Letter Content */}
-          <div className="relative z-10 max-w-3xl mx-auto space-y-6 text-ghost-text/90 font-serif leading-relaxed text-lg">
-            <div className="mb-12">
+          {/* Letter body */}
+          <div className="px-8 py-8 md:px-12 md:py-10 space-y-5 font-serif leading-relaxed text-rg-text-secondary text-sm max-h-[600px] overflow-y-auto">
+            <div className="space-y-1 mb-8">
+              <p className="text-rg-text font-sans font-medium text-xs uppercase tracking-wider mb-3">From</p>
               <p>{letter.tenantName}</p>
               <p>{letter.tenantAddress}</p>
-              <p className="mt-4">{letter.date}</p>
+              <p className="pt-2 text-rg-text-muted text-xs">{letter.date}</p>
             </div>
 
-            <div className="mb-8">
+            <div className="space-y-1 mb-8">
+              <p className="text-rg-text font-sans font-medium text-xs uppercase tracking-wider mb-3">To</p>
               <p>{letter.landlordName}</p>
               <p>{letter.landlordAddress}</p>
             </div>
 
-            <div className="font-bold mb-8">
-              RE: {letter.subject}
+            <div className="border-l-2 border-rg-accent pl-5 mb-8">
+              <p className="font-sans font-semibold text-rg-text text-sm">RE: {letter.subject}</p>
             </div>
 
-            <div className="whitespace-pre-wrap">{letter.body}</div>
+            <div className="whitespace-pre-line">{letter.body}</div>
 
-            <div className="my-8 pl-6 border-l-4 border-ghost-orange/30 space-y-6">
+            <div className="space-y-5 my-8">
               {letter.violations.map((v, i) => (
-                <div key={i}>
-                  <p className="font-bold text-ghost-text">{v.title}</p>
-                  <p className="text-sm text-ghost-text-secondary mb-1">Violation of: {v.code}</p>
-                  <p className="text-sm italic">{v.description}</p>
+                <div key={i} className="card p-4">
+                  <p className="font-sans font-semibold text-rg-text text-sm mb-1">{v.title}</p>
+                  <p className="text-xs text-rg-accent mb-1.5">Violation of: {v.code}</p>
+                  <p className="text-xs italic">{v.description}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-12">
+            <div className="pt-8">
               <p>Sincerely,</p>
-              <div className="mt-8 pt-4 border-t border-ghost-border inline-block w-48">
-                <p>{letter.tenantName}</p>
+              <div className="mt-8 pt-4 border-t border-rg-border inline-block">
+                <p className="text-rg-text font-medium">{letter.tenantName}</p>
               </div>
             </div>
           </div>
         </motion.div>
+
+        {/* Export note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+          className="mt-5 text-xs text-rg-text-muted text-center"
+        >
+          This letter is generated automatically from your lease analysis. Consult a licensed attorney before sending.
+        </motion.p>
       </div>
     </div>
   );
