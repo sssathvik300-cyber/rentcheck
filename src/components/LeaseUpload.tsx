@@ -56,7 +56,7 @@ export default function LeaseUpload({ onUploadComplete }: LeaseUploadProps) {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-4xl mx-auto px-4 py-6 flex flex-col justify-center">
+    <div className="min-h-[calc(100vh-4rem)] w-full max-w-4xl mx-auto px-4 py-6 flex flex-col justify-center">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
