@@ -35,12 +35,12 @@ export default function AnalysisTimeline({ onComplete }: AnalysisTimelineProps) 
   const progress = (completedCount / steps.length) * 100;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex px-6 py-12">
+    <div className="min-h-screen w-full max-w-4xl mx-auto px-4 py-6 flex flex-col justify-center">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="m-auto w-full max-w-lg"
+        className="w-full max-w-lg mx-auto"
       >
         {/* Header */}
         <div className="text-center mb-10">

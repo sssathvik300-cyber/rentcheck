@@ -121,8 +121,7 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
   });
 
   return (
-    <div className="min-h-screen px-6 py-16 md:py-20">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen w-full max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -152,9 +151,9 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+          className="flex flex-wrap gap-4 mb-8"
         >
-          <div className="card p-5">
+          <div className="card p-4 flex-1 min-w-[140px]">
             <div className="flex items-center gap-2 mb-3">
               <BarChart3 className="w-4 h-4 text-rg-danger" />
               <span className="text-xs text-rg-text-muted">Risk Score</span>
@@ -162,7 +161,7 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
             <p className="text-2xl font-bold text-rg-danger">{report.riskScore}</p>
             <p className="text-xs text-rg-text-muted mt-1">out of 100</p>
           </div>
-          <div className="card p-5">
+          <div className="card p-4 flex-1 min-w-[140px]">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-rg-warning" />
               <span className="text-xs text-rg-text-muted">Violations</span>
@@ -170,7 +169,7 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
             <p className="text-2xl font-bold">{report.violations.length}</p>
             <p className="text-xs text-rg-text-muted mt-1">{criticalCount} critical, {highCount} high</p>
           </div>
-          <div className="card p-5">
+          <div className="card p-4 flex-1 min-w-[140px]">
             <div className="flex items-center gap-2 mb-3">
               <DollarSign className="w-4 h-4 text-rg-accent" />
               <span className="text-xs text-rg-text-muted">Impact</span>
@@ -233,7 +232,7 @@ export default function ViolationReport({ report, onViewLandlord, onGenerateLett
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="card overflow-hidden mb-8"
+          className="card mb-8"
         >
           <AnimatePresence mode="popLayout">
             {filtered.length > 0 ? (
